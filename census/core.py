@@ -388,7 +388,7 @@ class ACS5Client(ACSClient):
     def state_secondary_school(self, fields, state_fips,
                            fips, **kwargs):
         if not state_fips:
-            return self.get(fields, geo={'for': 'school district (elementary):{}'.format(fips)}, **kwargs)
+            return self.get(fields, geo={'for': 'school district (secondary):{}'.format(fips)}, **kwargs)
         return self.get(fields, geo={
             'for': 'school district (secondary):{}'.format(fips),
             'in': 'state:{}'.format(state_fips),
@@ -398,7 +398,7 @@ class ACS5Client(ACSClient):
     def state_unified_school(self, fields, state_fips,
                            fips, **kwargs):
         if not state_fips:
-            return self.get(fields, geo={'for': 'school district (elementary):{}'.format(fips)}, **kwargs)
+            return self.get(fields, geo={'for': 'school district (unified):{}'.format(fips)}, **kwargs)
         return self.get(fields, geo={
             'for': 'school district (unified):{}'.format(fips),
             'in': 'state:{}'.format(state_fips),
