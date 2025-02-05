@@ -377,6 +377,8 @@ class ACS5Client(ACSClient):
     @supported_years(2023, 2022, 2021, 2020)
     def state_elementary_school(self, fields, state_fips,
                            fips, **kwargs):
+        if not state_fips:
+            return self.get(fields, geo={'for': 'school district (elementary):{}'.format(fips)}, **kwargs)
         return self.get(fields, geo={
             'for': 'school district (elementary):{}'.format(fips),
             'in': 'state:{}'.format(state_fips),
@@ -385,6 +387,8 @@ class ACS5Client(ACSClient):
     @supported_years(2023, 2022, 2021, 2020)
     def state_secondary_school(self, fields, state_fips,
                            fips, **kwargs):
+        if not state_fips:
+            return self.get(fields, geo={'for': 'school district (elementary):{}'.format(fips)}, **kwargs)
         return self.get(fields, geo={
             'for': 'school district (secondary):{}'.format(fips),
             'in': 'state:{}'.format(state_fips),
@@ -393,6 +397,8 @@ class ACS5Client(ACSClient):
     @supported_years(2023, 2022, 2021, 2020)
     def state_unified_school(self, fields, state_fips,
                            fips, **kwargs):
+        if not state_fips:
+            return self.get(fields, geo={'for': 'school district (elementary):{}'.format(fips)}, **kwargs)
         return self.get(fields, geo={
             'for': 'school district (unified):{}'.format(fips),
             'in': 'state:{}'.format(state_fips),
@@ -602,25 +608,9 @@ class PLClient(Client):
     
     @supported_years()
     def state_elementary_school(self, fields, state_fips,
-                           fips, **kwargs):
+                           tract, **kwargs):
         return self.get(fields, geo={
-            'for': 'school district (elementary):{}'.format(fips),
-            'in': 'state:{}'.format(state_fips),
-        }, **kwargs)
-
-    @supported_years()
-    def state_secondary_school(self, fields, state_fips,
-                           fips, **kwargs):
-        return self.get(fields, geo={
-            'for': 'school district (secondary):{}'.format(fips),
-            'in': 'state:{}'.format(state_fips),
-        }, **kwargs)
-
-    @supported_years()
-    def state_unified_school(self, fields, state_fips,
-                           fips, **kwargs):
-        return self.get(fields, geo={
-            'for': 'school district (unified):{}'.format(fips),
+            'for': 'school district (elementary):{}'.format(tract),
             'in': 'state:{}'.format(state_fips),
         }, **kwargs)
 
