@@ -221,7 +221,6 @@ class Client(object):
         types = {"fips-for": str,
                  "fips-in": str,
                  "int": float_or_str,
-                 "long": float_or_str,
                  "float": float,
                  "string": str}
 
@@ -287,24 +286,13 @@ class Client(object):
             'for': 'state legislative district (lower chamber):{}'.format(str(legislative_district).zfill(3)),
             'in': 'state:{}'.format(state_fips),
         }, **kwargs)
-    @supported_years()
-    def combined_statistical_area(self, fields, csa, **kwargs):
-        return self.get(fields, geo={
-            'for': 'combined statistical area:{}'.format(str(csa)),
-        }, **kwargs)
-    
-    @supported_years()
-    def msa(self, fields, msa, **kwargs):
-        return self.get(fields, geo={
-            'for': ('metropolitan statistical area/' +
-                'micropolitan statistical area:{}'.format(msa)), 
-        }, **kwargs)
+
 
 class ACSClient(Client):
 
     def _switch_endpoints(self, year):
 
-        if year >= 2005:
+        if year > 2009:
             self.endpoint_url = 'https://api.census.gov/data/%s/acs/%s'
             self.definitions_url = 'https://api.census.gov/data/%s/acs/%s/variables.json'
             self.definition_url = 'https://api.census.gov/data/%s/acs/%s/variables/%s.json'
@@ -327,10 +315,10 @@ class ACSClient(Client):
 
 class ACS5Client(ACSClient):
 
-    default_year = 2023
+    default_year = 2022
     dataset = 'acs5'
 
-    years = (2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009)
+    years = (2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009)
 
     @supported_years()
     def state_county_subdivision(self, fields, state_fips,
@@ -359,7 +347,7 @@ class ACS5Client(ACSClient):
             geo['in'] += ' tract:{}'.format(tract)
         return self.get(fields, geo=geo, **kwargs)
 
-    @supported_years(2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011)
+    @supported_years(2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011)
     def zipcode(self, fields, zcta, **kwargs):
         warnings.warn(
             "zipcode has been deprecated; use state_zipcode instead",
@@ -370,7 +358,7 @@ class ACS5Client(ACSClient):
 
         return self.state_zipcode(fields, state_fips, zcta, **kwargs)
 
-    @supported_years(2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011)
+    @supported_years(2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011)
     def state_zipcode(self, fields, state_fips, zcta, **kwargs):
         year = kwargs.get('year', self.default_year)
         geo = {
@@ -385,7 +373,30 @@ class ACS5Client(ACSClient):
         else:
             geo["regionin"] = 'state:{}'.format(state_fips)
         return self.get(fields, geo, **kwargs)
-
+    
+    @supported_years(2023, 2022, 2021, 2020)
+    def state_elementary_school(self, fields, state_fips,
+                           fips, **kwargs):
+        return self.get(fields, geo={
+            'for': 'school district (elementary):{}'.format(fips),
+            'in': 'state:{}'.format(state_fips),
+        }, **kwargs)
+    
+    @supported_years(2023, 2022, 2021, 2020)
+    def state_secondary_school(self, fields, state_fips,
+                           fips, **kwargs):
+        return self.get(fields, geo={
+            'for': 'school district (secondary):{}'.format(fips),
+            'in': 'state:{}'.format(state_fips),
+        }, **kwargs)
+    
+    @supported_years(2023, 2022, 2021, 2020)
+    def state_unified_school(self, fields, state_fips,
+                           fips, **kwargs):
+        return self.get(fields, geo={
+            'for': 'school district (unified):{}'.format(fips),
+            'in': 'state:{}'.format(state_fips),
+        }, **kwargs)
 
 class ACS5DpClient(ACS5Client):
 
@@ -410,7 +421,7 @@ class ACS1StClient(ACS5Client):
 
     dataset = 'acs1/subject'
 
-    years = (2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012)
+    years = (2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012)
 
 
 class ACS3Client(ACSClient):
@@ -436,10 +447,10 @@ class ACS3DpClient(ACS3Client):
 
 class ACS1Client(ACSClient):
 
-    default_year = 2023
+    default_year = 2022
     dataset = 'acs1'
 
-    years = (2023, 2022, 2021, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005)
+    years = (2022, 2021, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011)
 
     @supported_years()
     def state_county_subdivision(self, fields, state_fips,
@@ -454,7 +465,7 @@ class ACS1DpClient(ACS1Client):
 
     dataset = 'acs1/profile'
 
-    years = (2023, 2022, 2021, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012)
+    years = (2022, 2021, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012)
 
 
 class SF1Client(Client):
@@ -588,6 +599,30 @@ class PLClient(Client):
         if tract:
             geo['in'] += ' tract:{}'.format(tract)
         return self.get(fields, geo=geo, **kwargs)
+    
+    @supported_years()
+    def state_elementary_school(self, fields, state_fips,
+                           fips, **kwargs):
+        return self.get(fields, geo={
+            'for': 'school district (elementary):{}'.format(fips),
+            'in': 'state:{}'.format(state_fips),
+        }, **kwargs)
+
+    @supported_years()
+    def state_secondary_school(self, fields, state_fips,
+                           fips, **kwargs):
+        return self.get(fields, geo={
+            'for': 'school district (secondary):{}'.format(fips),
+            'in': 'state:{}'.format(state_fips),
+        }, **kwargs)
+
+    @supported_years()
+    def state_unified_school(self, fields, state_fips,
+                           fips, **kwargs):
+        return self.get(fields, geo={
+            'for': 'school district (unified):{}'.format(fips),
+            'in': 'state:{}'.format(state_fips),
+        }, **kwargs)
 
 
 class Census(object):
