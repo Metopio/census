@@ -1,8 +1,13 @@
 import warnings
 from functools import wraps, lru_cache
 
-import pkg_resources
-__version__ = pkg_resources.require("census")[0].version
+try:
+    from importlib.metadata import version
+except ImportError:
+    # Fallback for Python < 3.8
+    from importlib_metadata import version
+
+__version__ = version("census")
 
 ALL = '*'
 
